@@ -62,7 +62,10 @@ struct ContentView: View {
                     
                 }
                 
-                Section(header: Text("How much tip do you want to leave ?")) {
+                Section(header:
+                            Text("How much tip do you want to leave ?")
+                            .blueTitleStyle()
+                ) {
                     Picker("Tip percentage", selection: $tipPercentage) {
                         ForEach(0 ..< tipPercentages.count) {
                             Text("\(self.tipPercentages[$0])%")
@@ -71,20 +74,47 @@ struct ContentView: View {
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 
-                Section(header: Text("Amount per person")) {
+                Section(header:
+                            Text("Amount per person")
+                            .blueTitleStyle()
+                ) {
                     /*
                      You should find that because all the values that make up our total are marked with @State, changing any of them will cause the total to be recalculated automatically.
                      */
                     Text("$\(totalPerPerson, specifier: "%.2f")")
                 }
                 
-                Section(header: Text("Total Amount")) {
+                Section(header:
+                            Text("Total Amount")
+                            .conditionalTitleStyle(tipPercentage: tipPercentage)
+                ) {
                     Text("$\(totalAmount, specifier: "%.2f")")
                 }
             }
             .navigationBarTitle("WeSplit")
             
         }
+    }
+    
+}
+
+struct Title: ViewModifier {
+    var color: Color
+    
+    func body(content: Content) -> some View {
+        content
+            .font(.subheadline)
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func blueTitleStyle() -> some View {
+        self.modifier(Title(color: .blue))
+    }
+    
+    func conditionalTitleStyle(tipPercentage: Int) -> some View {
+        self.modifier(tipPercentage == 4 ? Title(color: .red) : Title(color: .blue))
     }
 }
 
